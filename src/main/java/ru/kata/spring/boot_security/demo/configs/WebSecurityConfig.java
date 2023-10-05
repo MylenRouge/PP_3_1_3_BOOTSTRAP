@@ -10,44 +10,45 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.kata.spring.boot_security.demo.services.UserDetailsServiceImpl;
+import ru.kata.spring.boot_security.demo.services.UserServiceImpl;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    private final UserServiceImpl userDetailsService;
     private final SuccessUserHandler successUserHandler;
-    private final UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    public WebSecurityConfig(SuccessUserHandler successUserHandler, UserDetailsServiceImpl userDetailsService) {
-        this.successUserHandler = successUserHandler;
+    public WebSecurityConfig(UserServiceImpl userDetailsService, SuccessUserHandler successUserHandler) {
         this.userDetailsService = userDetailsService;
+        this.successUserHandler = successUserHandler;
     }
 
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/", "/index").authenticated()
+                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/auth/login", "/auth/registration", "/error").permitAll()
-                .anyRequest().hasAnyRole("USER", "ADMIN")
+                .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage("/auth/login")
-                .loginProcessingUrl("/process_login")
-                .defaultSuccessUrl("/user", true)
-                .failureUrl("/auth/login?error")
+                .formLogin().successHandler(successUserHandler)
+                .permitAll()
                 .and()
-                .logout().logoutUrl("/logout").logoutSuccessUrl("/auth/login");
+                .logout()
+                .permitAll();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService)
-                .passwordEncoder(getPasswordEncoder()); //Шифрование при аутентификации
+                .passwordEncoder(passwordEncoder()); //Шифрование при аутентификации
 
     }
-
     @Bean
-    public PasswordEncoder getPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+    public static NoOpPasswordEncoder passwordEncoder() {
+        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
     }
 }

@@ -1,28 +1,33 @@
 package ru.kata.spring.boot_security.demo.models;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "surname")
+    @Column(name = "surname", nullable = false)
     private String surname;
 
-    @Column(name = "username")
+    @Column(name = "username", nullable = false, unique = true, length = 40)
     private String username;
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
     @Column(name = "age")
     private Short age;
-    @Column(name = "role")
-    private String role;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Role> roleSet;
 
     public Long getId() {
         return id;
@@ -52,8 +57,33 @@ public class User {
         return username;
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoleSet();
     }
 
     public String getPassword() {
@@ -72,13 +102,14 @@ public class User {
         this.age = age;
     }
 
-    public String getRole() {
-        return role;
+    public Set<Role> getRoleSet() {
+        return roleSet;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleSet(Set<Role> roleSet) {
+        this.roleSet = roleSet;
     }
+
 
     @Override
     public boolean equals(Object o) {

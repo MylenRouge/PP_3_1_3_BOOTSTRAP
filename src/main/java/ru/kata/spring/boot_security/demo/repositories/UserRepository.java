@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.models.User;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +20,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Override
     <S extends User> S save(S user);
     @Modifying
-    @Query("UPDATE User user SET user.name = :name, user.surname = :surname, user.age = :age WHERE user.id = :id")
-    int updateUserByIdIs(@Param("id") Long id, @Param("name") String name, @Param("surname") String surname, @Param("age") Short age);
+    @Query("UPDATE User user SET user.name = :name, user.surname = :surname, user.age = :age, user.username = :username, user.password = :password WHERE user.id = :id")
+    void updateById(@Param("id") Long id, @Param("name") String name, @Param("surname") String surname, @Param("age") Short age, @Param("username") String username, @Param("password") String password);
     Optional<User> findByUsername(String username);
     @Override
     void deleteById(Long id);

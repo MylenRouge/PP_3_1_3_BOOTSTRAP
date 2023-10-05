@@ -14,7 +14,6 @@ import java.util.Optional;
 @Service
 public interface UserService extends UserRepository {
 
-
     @Override
     List<User> findAll();
     @Override
@@ -24,8 +23,8 @@ public interface UserService extends UserRepository {
 
     @Transactional
     @Modifying
-    @Query("UPDATE User user SET user.name = :name, user.surname = :surname, user.age = :age WHERE user.id = :id")
-    int updateById(@Param("id") Long id, @Param("name") String name, @Param("surname") String surname, @Param("age") Short age);
+    @Query("UPDATE User user SET user.name = :name, user.surname = :surname, user.age = :age, user.username = :username, user.password = :password WHERE user.id = :id")
+    void updateById(@Param("id") Long id, @Param("name") String name, @Param("surname") String surname, @Param("age") Short age, @Param("username") String username, @Param("password") String password);
     Optional<User> findByUsername(String username);
     @Override
     void deleteById(Long id);
