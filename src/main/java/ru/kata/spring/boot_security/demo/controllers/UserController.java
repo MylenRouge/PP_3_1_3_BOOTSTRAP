@@ -13,15 +13,13 @@ import java.security.Principal;
 public class UserController {
     private final UserService userService;
 
-
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
     public String showUser(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName()).get();
-        model.addAttribute("myUser", user);
+        model.addAttribute("myUser", userService.findByUsername(principal.getName()));
         return "user-page";
     }
 }

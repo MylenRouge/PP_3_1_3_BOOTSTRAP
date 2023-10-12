@@ -70,7 +70,7 @@
                                              aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
-                                                    <form th:method="POST"
+                                                    <form th:method="PATCH"
                                                           th:action="@{/admin/edit}">
 
                                                         <div class="modal-header">
@@ -164,7 +164,7 @@
                                              aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
-                                                    <form th:method="GET"
+                                                    <form th:method="DELETE"
                                                           th:action="@{/admin/{id}(id=${userList.getId()})}">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="staticBackdropLabel">Delete

@@ -5,7 +5,7 @@ import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 
 import java.util.List;
 
-public interface RoleService extends RoleRepository {
-    @Override
+public interface RoleService {
+
     List<Role> findAll();
 }

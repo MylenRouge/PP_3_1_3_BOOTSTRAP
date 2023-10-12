@@ -28,10 +28,8 @@ public class AdminController {
 
     @GetMapping
     public String showAllUser(Model model, Principal principal) {
-        List<User> allUser = userService.findAll();
-        model.addAttribute("users", allUser);
-        User user = userService.findByUsername(principal.getName()).get();
-        model.addAttribute("myUser", user);
+        model.addAttribute("users", userService.findAll());
+        model.addAttribute("myUser", userService.findByUsername(principal.getName()));
         model.addAttribute("newUser", new User());
         model.addAttribute("listRoles", roleService.findAll());
         return "admin-panel";
@@ -39,22 +37,19 @@ public class AdminController {
 
     @PostMapping
     public String saveUser(@ModelAttribute("newUser") User user) {
-        userService.save(user);
+        userService.saveUser(user);
         return "redirect:/admin";
     }
 
-    @PostMapping("/edit")
-    public String updateUser(@RequestParam("id") Long id, @RequestParam("name") String name,
-                             @RequestParam("surname") String surname, @RequestParam("age") Short age, @RequestParam("username") String username,
-                             @RequestParam("password") String password) {
-
-        userService.updateById(id, name, surname, age, username, password);
+    @PatchMapping("/edit")
+    public String updateUser(@ModelAttribute("user") User user) {
+        userService.updateUser(user);
         return "redirect:/admin";
     }
 
-    @GetMapping("/{id}")
+    @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable("id") Long id) {
-        userService.deleteById(id);
+        userService.deleteUser(id);
         return "redirect:/admin";
     }
 }

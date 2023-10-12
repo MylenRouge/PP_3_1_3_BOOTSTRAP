@@ -26,7 +26,10 @@ public class User implements UserDetails {
     @Column(name = "age")
     private Short age;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
+    @JoinTable(name = "users_role_set",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roleSet;
 
     public Long getId() {
